@@ -1,26 +1,36 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { QRCodeSVG } from 'qrcode.react';
-import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  QRInputField, 
+  QRCodeCustomization 
+} from "@/components/selectors";
+import { Header } from "@/components/header";
 
 export default function Generator() {
+  const [activeTab, setActiveTab] = useState<string>('links');
   const [text, setText] = useState<string>('https://example.com');
   const [size, setSize] = useState<number>(200);
   const [errorCorrection, setErrorCorrection] = useState<'L' | 'M' | 'Q' | 'H'>('M');
   const [darkColor, setDarkColor] = useState<string>('#000000');
   const [lightColor, setLightColor] = useState<string>('#ffffff');
   const qrRef = useRef<HTMLDivElement | null>(null);
+  
+  useEffect(() => {
+    setText(activeTab === 'links' ? 'https://example.com' : 'hello world!');
+  }, [activeTab]);
 
   const downloadQRCode = () => {
     if (!qrRef.current) return;
@@ -39,7 +49,6 @@ export default function Generator() {
     
     const img = new Image();
     img.onload = () => {
-      // modified for clearer image
       const scaleFactor = 4;
       canvas.width = size * scaleFactor;
       canvas.height = size * scaleFactor;
@@ -49,7 +58,7 @@ export default function Generator() {
       const pngFile = canvas.toDataURL('image/png');
       
       const downloadLink = document.createElement('a');
-      downloadLink.download = 'qrcode.png';
+      downloadLink.download = activeTab === 'links' ? 'url-qrcode.png' : 'message-qrcode.png';
       downloadLink.href = pngFile;
       downloadLink.click();
 
@@ -64,130 +73,103 @@ export default function Generator() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen p-6">
+    <div className="flex flex-col min-h-screen">
+      <Header />
       <div className="flex items-center justify-center flex-grow">
       <main className="flex flex-col items-center w-full max-w-6xl mx-auto">
-        <h3 className="font-bold text-5xl mb-8">Generate Your QR Code</h3>
-        
-        <div className="flex flex-col md:flex-row w-full justify-center">
-          <div className="flex flex-col gap-8 w-full md:w-1/2">
-            <div className="w-full max-w-md mx-auto">
-              <label className="block text-left text-sm font-medium mb-2" htmlFor="content">
-                Enter or Paste URL:
-              </label>
-              <Input
-                id="content"
-                type="text"
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                placeholder="Enter URL here (e.g. https://example.com)"
-                className="w-full"
-              />
-            </div>
-
-            {/* Customization Selectors */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-md mx-auto">
-              <div className="grid w-full items-center gap-1.5">
-                <label htmlFor="size" className="text-left text-sm font-medium">Size:</label>
-                <Select value={size.toString()} onValueChange={(value) => setSize(Number(value))}>
-                  <SelectTrigger className='w-full'>
-                    <SelectValue/>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="128">Small (128 × 128)</SelectItem>
-                    <SelectItem value="200">Medium (200 × 200)</SelectItem>
-                    <SelectItem value="300">Large (300 × 300)</SelectItem>
-                    <SelectItem value="400">Extra Large (400 × 400)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="grid w-full items-center gap-1.5">
-                <label htmlFor="error-correction" className="text-left text-sm font-medium">Error Correction:</label>
-                <Select value={errorCorrection} onValueChange={(value) => setErrorCorrection(value as 'L' | 'M' | 'Q' | 'H')}>
-                  <SelectTrigger className='w-full'>
-                    <SelectValue/>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="L">Low (7%)</SelectItem>
-                    <SelectItem value="M">Medium (15%)</SelectItem>
-                    <SelectItem value="Q">Quartile (25%)</SelectItem>
-                    <SelectItem value="H">High (30%)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div>
-                <label className="block text-left text-sm font-medium mb-2" htmlFor="dark-color">
-                  Dark Color:
-                </label>
-                <div className="relative w-full h-10">
-                  <div className="w-full h-full border rounded-md overflow-hidden">
-                    <div 
-                      className="w-full h-full" 
-                      style={{ backgroundColor: darkColor }}
-                    ></div>
-                  </div>
-                  
-                  <input
-                    type="color"
-                    id="dark-color"
-                    value={darkColor}
-                    onChange={(e) => setDarkColor(e.target.value)}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+        <div className="flex flex-col md:flex-row w-full justify-center items-center">
+          <div className="flex flex-col w-full md:w-1/2 px-4">
+          <h3 className="font-bold text-2xl mb-2">Generate Your QR Code</h3>
+          <Tabs 
+            defaultValue="links" 
+            className="w-full"
+            onValueChange={(value) => setActiveTab(value)}
+          >
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="links">Link</TabsTrigger>
+              <TabsTrigger value="text">Message</TabsTrigger>
+            </TabsList>
+            <TabsContent value="links">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Link</CardTitle>
+                  <CardDescription>
+                    Create a QR code from an URL or website.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <QRInputField 
+                    label="Enter or Paste URL:" 
+                    placeholder="Enter URL here (e.g. https://example.com)"
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
                   />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-left text-sm font-medium mb-2" htmlFor="light-color">
-                  Light Color:
-                </label>
-                <div className="relative w-full h-10">
-                  <div className="w-full h-full border rounded-md overflow-hidden">
-                    <div 
-                      className="w-full h-full" 
-                      style={{ backgroundColor: lightColor }}
-                    ></div>
-                  </div>
-                  
-                  <input
-                    type="color"
-                    id="light-color"
-                    value={lightColor}
-                    onChange={(e) => setLightColor(e.target.value)}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  <QRCodeCustomization 
+                    size={size}
+                    setSize={setSize}
+                    errorCorrection={errorCorrection}
+                    setErrorCorrection={setErrorCorrection}
+                    darkColor={darkColor}
+                    setDarkColor={setDarkColor}
+                    lightColor={lightColor}
+                    setLightColor={setLightColor}
                   />
-                </div>
-              </div>
-              
-            </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="text">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Message</CardTitle>
+                  <CardDescription>
+                    Create a QR code containing text or a message.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <QRInputField 
+                    label="Enter Message:" 
+                    placeholder="Enter your message here"
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                  />
+                  <QRCodeCustomization 
+                    size={size}
+                    setSize={setSize}
+                    errorCorrection={errorCorrection}
+                    setErrorCorrection={setErrorCorrection}
+                    darkColor={darkColor}
+                    setDarkColor={setDarkColor}
+                    lightColor={lightColor}
+                    setLightColor={setLightColor}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
           </div>
           {/* QR Code Display */}
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center ml-4">
             <div ref={qrRef} className="bg-white p-6 rounded-md shadow-md">
               <QRCodeSVG
-                value={text || 'https://example.com'}
-                size={200}
+                value={text || (activeTab === 'links' ? 'https://example.com' : 'hello world!')}
+                size={size}
                 level={errorCorrection}
                 fgColor={darkColor}
                 bgColor={lightColor}
-                includeMargin={true}
               />
             </div>
+            <div className="flex gap-4 mt-4">
+              <Button onClick={downloadQRCode} className="cursor-pointer">Download QR Code</Button>
+              <Button variant="outline" className="cursor-pointer" asChild>
+                <Link href="/">Home</Link>
+              </Button>
+            </div>
           </div>
-        </div>
-        
-        <div className="flex gap-4 mt-8">
-          <Button onClick={downloadQRCode} className="cursor-pointer">Download QR Code</Button>
-          <Button variant="outline" className="cursor-pointer" asChild>
-            <Link href="/">Back to Home</Link>
-          </Button>
         </div>
       </main>
       </div>
   
-      <footer className="text-center mt-auto pt-16">
+      <footer className="text-center mt-auto pt-16 pb-6">
         <p className="font-semi-bold text-gray-300 text-[10px]">
           &copy; 2025. All Rights Reserved.
         </p>
