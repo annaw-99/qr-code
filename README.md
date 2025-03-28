@@ -1,4 +1,4 @@
-## QR Code Generator
+## QR Code Generator - InstaQR
 
 A modern, customizable QR code generation web application built with Next.js.
 
