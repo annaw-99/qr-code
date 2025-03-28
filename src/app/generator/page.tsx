@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { QRCodeSVG } from 'qrcode.react';
+import { toast } from "sonner";
+import { Header } from "@/components/header";
 import {
   Card,
   CardContent,
@@ -11,13 +13,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   QRInputField, 
   QRCodeCustomization 
 } from "@/components/selectors";
-import { Header } from "@/components/header";
 
 export default function Generator() {
   const [activeTab, setActiveTab] = useState<string>('links');
@@ -76,10 +76,10 @@ export default function Generator() {
     <div className="flex flex-col min-h-screen">
       <Header />
       <div className="flex items-center justify-center flex-grow">
-      <main className="flex flex-col items-center w-full max-w-6xl mx-auto">
+      <main className="flex flex-col items-center w-full max-w-6xl mx-auto pt-12 px-10">
         <div className="flex flex-col md:flex-row w-full justify-center items-center">
           <div className="flex flex-col w-full md:w-1/2 px-4">
-          <h3 className="font-bold text-2xl mb-2">Generate Your QR Code</h3>
+          {/* QR Code Customization */}
           <Tabs 
             defaultValue="links" 
             className="w-full"
@@ -148,7 +148,8 @@ export default function Generator() {
           </Tabs>
           </div>
           {/* QR Code Display */}
-          <div className="flex flex-col items-center ml-4">
+          <div className="flex flex-col items-center mt-8 2xl:ml-4 2xl:mt-0">
+            <h5 className="font-semibold text-xl mb-2">Preview QR Code</h5>
             <div ref={qrRef} className="bg-white p-6 rounded-md shadow-md">
               <QRCodeSVG
                 value={text || (activeTab === 'links' ? 'https://example.com' : 'hello world!')}
@@ -169,7 +170,7 @@ export default function Generator() {
       </main>
       </div>
   
-      <footer className="text-center mt-auto pt-16 pb-6">
+      <footer className="text-center mt-auto pt-16 pb-2 2xl:pb-8">
         <p className="font-semi-bold text-gray-300 text-[10px]">
           &copy; 2025. All Rights Reserved.
         </p>
