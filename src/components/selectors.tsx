@@ -1,3 +1,5 @@
+// using this means that the site would be rendered on the user's browser
+// rather than on the server
 'use client';
 
 import React from 'react';
@@ -16,6 +18,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+// an interface defines the shape or structure that an object should have
 interface QRInputFieldProps {
   label: string;
   placeholder: string;
@@ -23,11 +26,12 @@ interface QRInputFieldProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+// creates a text input field
 export function QRInputField({ 
   label, 
   placeholder, 
   value, 
-  onChange 
+  onChange // function to handle input changes
 }: QRInputFieldProps) {
   return (
     <div className="w-full mb-3">
@@ -51,6 +55,7 @@ interface SizeSelectorProps {
   setSize: (size: number) => void;
 }
 
+// creates a QR code size selector
 export function SizeSelector({ size, setSize }: SizeSelectorProps) {
   return (
     <div className="grid w-full items-center gap-1.5">
@@ -75,6 +80,7 @@ interface ErrorCorrectionSelectorProps {
   setErrorCorrection: (level: 'L' | 'M' | 'Q' | 'H') => void;
 }
 
+// creates a QR code error correction selector
 export function ErrorCorrectionSelector({ 
   errorCorrection, 
   setErrorCorrection 
@@ -117,6 +123,7 @@ interface ColorPickerProps {
   setColor: (color: string) => void;
 }
 
+// creates a QR code color selector
 export function ColorPicker({ label, color, setColor }: ColorPickerProps) {
   return (
     <div className="grid w-full items-center gap-1.5">
@@ -154,6 +161,7 @@ interface QRCodeCustomizationProps {
   setLightColor: (color: string) => void;
 }
 
+// this combines all the customization options
 export function QRCodeCustomization({ 
   size, 
   setSize, 

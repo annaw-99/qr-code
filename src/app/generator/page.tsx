@@ -73,12 +73,12 @@ export default function Generator() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen font-[family-name:var(--font-geist-sans)]">
       <Header />
       <div className="flex items-center justify-center flex-grow">
       <main className="flex flex-col items-center w-full max-w-6xl mx-auto pt-12 px-10">
         <div className="flex flex-col md:flex-row w-full justify-center items-center">
-          <div className="flex flex-col w-full md:w-1/2 px-4">
+          <div className="flex flex-col w-full md:w-1/2 px-2">
           {/* QR Code Customization */}
           <Tabs 
             defaultValue="links" 
@@ -153,7 +153,7 @@ export default function Generator() {
             <div ref={qrRef} className="bg-white p-6 rounded-md shadow-md">
               <QRCodeSVG
                 value={text || (activeTab === 'links' ? 'https://example.com' : 'hello world!')}
-                size={size}
+                size={200}
                 level={errorCorrection}
                 fgColor={darkColor}
                 bgColor={lightColor}
