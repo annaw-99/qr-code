@@ -148,7 +148,7 @@ export default function Generator() {
           </Tabs>
           </div>
           {/* QR Code Display */}
-          <div className="flex flex-col items-center mt-8 2xl:ml-4 2xl:mt-0">
+          <div className="flex flex-col items-center mt-8 md:ml-4 2xl:mt-0">
             <h5 className="font-semibold text-xl mb-2">Preview QR Code</h5>
             <div ref={qrRef} className="bg-white p-6 rounded-md shadow-md">
               <QRCodeSVG
